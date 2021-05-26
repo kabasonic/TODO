@@ -2,6 +2,7 @@ package com.kabasonic.todo.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -38,10 +40,10 @@ public class TaskDetailsFragment extends Fragment {
 
     private EditText titleField;
     private EditText descriptionField;
+    private EditText dateField;
     private MaterialButton saveTaskButton;
     private MaterialButton cancelTaskButton;
     private AutoCompleteTextView labelField;
-
 
     public TaskDetailsFragment(){}
 
@@ -78,6 +80,7 @@ public class TaskDetailsFragment extends Fragment {
 
         titleField = view.findViewById(R.id.inputTitle);
         descriptionField = view.findViewById(R.id.inputDesc);
+        dateField = view.findViewById(R.id.inputDate);
         saveTaskButton = view.findViewById(R.id.addTaskBt);
         cancelTaskButton = view.findViewById(R.id.delTaskBt);
         labelField = view.findViewById(R.id.inputLabel);
@@ -85,11 +88,18 @@ public class TaskDetailsFragment extends Fragment {
         viewModel = ViewModelProviders.of(this,viewModelFactory).get(TaskDetailsViewModel.class);
 
         initAutoCompleteLabel();
-
         saveTaskToDatabase();
         cancelTaskButton();
 
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setDataField();
+    }
+
+
     //finish activity;
     private void cancelTaskButton(){
         cancelTaskButton.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +115,13 @@ public class TaskDetailsFragment extends Fragment {
         saveTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewModel.insert(getDataField());
+                if(taskId == -1){
+                    viewModel.insert(getDataField());
+                }else{
+                    Task task = getDataField();
+                    task.setId(taskId);
+                    viewModel.update(task);
+                }
                 getActivity().finish();
             }
         });
@@ -117,6 +133,21 @@ public class TaskDetailsFragment extends Fragment {
         String description = descriptionField.getText().toString();
         String label = labelField.getText().toString();
         return new Task(title,description,label,0,true);
+    }
+
+    //function set data to field
+    private void setDataField(){
+        if(taskId!=-1){
+            viewModel.getTaskById(taskId).observe(getViewLifecycleOwner(), new Observer<Task>() {
+                @Override
+                public void onChanged(Task task) {
+                    titleField.setText(task.getTitle());
+                    descriptionField.setText(task.getDescription());
+                    labelField.setText(task.getLabel());
+                    dateField.setText(String.valueOf(task.getTimestamp()));
+                }
+            });
+        }
     }
 
     private void initAutoCompleteLabel(){
@@ -135,7 +166,5 @@ public class TaskDetailsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
-
-
 
 }

@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,7 +33,7 @@ import javax.inject.Inject;
 
 public class TaskListFragment extends Fragment {
 
-    private static final String TASK_ID = "EXTRA_ITEM_ID";
+    private static final String TASK_ID = "TASK_ID";
     private static final String DETAIL_FRAG = "DETAIL_FRAG";
 
     @Inject
@@ -83,17 +81,32 @@ public class TaskListFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this,viewModelFactory).get(TaskListViewModel.class);
 
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
         createNewTask();
+        buildAdapter();
         getAllTasks();
     }
 
+    private void buildAdapter(){
+        taskListAdapter = new TaskListAdapter(context);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context,RecyclerView.VERTICAL,false));
+        recyclerView.setAdapter(taskListAdapter);
+        taskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
 
+            @Override
+            public void onClickItemTask(long id) {
+                Activity container = getActivity();
+                Intent intent = new Intent(container, TaskDetailsActivity.class);
+                intent.putExtra(TASK_ID,id);
+                startActivity(intent);
+            }
+        });
+    }
 
     //show all task in database;
     private void getAllTasks(){
@@ -105,15 +118,8 @@ public class TaskListFragment extends Fragment {
                     Toast.makeText(context,"Task list is epmpty",Toast.LENGTH_LONG).show();
                 }else{
                     recyclerView.setVisibility(View.VISIBLE);
-
-                    taskListAdapter = new TaskListAdapter(context,tasks);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(context,RecyclerView.VERTICAL,false));
-                    recyclerView.setAdapter(taskListAdapter);
-//                    Log.d("TaskListFragment",
-//                            tasks.get(0).getId() + "\n" +
-//                                    tasks.get(0).getTitle() + "\n" +
-//                                    tasks.get(0).getDescription() + "\n" +
-//                                    tasks.get(0).getLabel() + "\n");
+                    taskListAdapter.setTaskList(tasks);
+                    taskListAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -124,15 +130,11 @@ public class TaskListFragment extends Fragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startTaskDetailsActivity();
+                Activity container = getActivity();
+                Intent intent = new Intent(container, TaskDetailsActivity.class);
+                startActivity(intent);
             }
         });
-    }
-
-    private void startTaskDetailsActivity(){
-        Activity container = getActivity();
-        Intent i = new Intent(container, TaskDetailsActivity.class);
-        startActivity(i);
     }
 
     @Override

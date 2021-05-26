@@ -1,6 +1,7 @@
 package com.kabasonic.todo.view.adapter;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -14,23 +15,36 @@ import com.google.android.material.checkbox.MaterialCheckBox;
 import com.kabasonic.todo.R;
 import com.kabasonic.todo.data.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHolder> {
 
+    public interface OnItemClickListener {
+
+        void onClickItemTask(long id);
+
+    }
+
+    OnItemClickListener mListener;
+
+    public void setOnItemClickListener(OnItemClickListener mListener){
+        this.mListener = mListener;
+    }
+
     private Context context;
     private List<Task> taskList;
 
-    public TaskListAdapter(Context context, List<Task> taskList){
+    public TaskListAdapter(Context context){
         this.context = context;
-        this.taskList = taskList;
+        this.taskList = new ArrayList<>();
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = View.inflate(context, R.layout.task_list_item,null);
-        return new ViewHolder(view);
+        View view = LayoutInflater.from(context).inflate(R.layout.task_list_item,parent,false);
+        return new ViewHolder(view,mListener);
     }
 
     @Override
@@ -51,7 +65,11 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         return taskList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public void setTaskList(List<Task> taskList) {
+        this.taskList = taskList;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
         public TextView description;
         public TextView label;
@@ -59,7 +77,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         public MaterialCheckBox active;
         public ImageButton expendedButton;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, OnItemClickListener mListener) {
             super(itemView);
 
             title = itemView.findViewById(R.id.titleRowId);
@@ -68,6 +86,13 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
             date = itemView.findViewById(R.id.dataRowId);
             active = itemView.findViewById(R.id.statusRowId);
             expendedButton = itemView.findViewById(R.id.btRowId);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onClickItemTask(taskList.get(getAdapterPosition()).getId());
+                }
+            });
         }
     }
 }
