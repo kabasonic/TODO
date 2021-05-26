@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -12,6 +14,7 @@ public class TaskRepository {
 
     private final TaskDao taskDao;
 
+    @Inject
     public TaskRepository(TaskDao taskDao){
         this.taskDao = taskDao;
     }

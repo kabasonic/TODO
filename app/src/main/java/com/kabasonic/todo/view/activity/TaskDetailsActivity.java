@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 
 import com.kabasonic.todo.R;
-import com.kabasonic.todo.data.Task;
 import com.kabasonic.todo.view.core.BaseActivity;
 import com.kabasonic.todo.view.fragment.TaskDetailsFragment;
 

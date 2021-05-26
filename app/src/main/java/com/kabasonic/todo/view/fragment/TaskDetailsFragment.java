@@ -5,26 +5,43 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.button.MaterialButton;
+import com.kabasonic.todo.AppTodo;
 import com.kabasonic.todo.R;
+import com.kabasonic.todo.data.Task;
+import com.kabasonic.todo.view.adapter.TaskListAdapter;
+import com.kabasonic.todo.view.viewmodel.TaskDetailsViewModel;
+
+import javax.inject.Inject;
 
 public class TaskDetailsFragment extends Fragment {
 
     public static final String TASK_ID = "TASK_ID";
+
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+
+    TaskDetailsViewModel viewModel;
 
     private long taskId;
     private Context context;
 
     private EditText titleField;
     private EditText descriptionField;
-    private MaterialButton addTaskButton;
-    private MaterialButton deleteTaskButton;
+    private MaterialButton saveTaskButton;
+    private MaterialButton cancelTaskButton;
+    private AutoCompleteTextView labelField;
+
 
     public TaskDetailsFragment(){}
 
@@ -39,6 +56,10 @@ public class TaskDetailsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ((AppTodo) getActivity().getApplication())
+                .getApplicationComponent()
+                .inject(this);
 
         Bundle args = getArguments();
         this.taskId = args.getLong(TASK_ID);
@@ -57,10 +78,51 @@ public class TaskDetailsFragment extends Fragment {
 
         titleField = view.findViewById(R.id.inputTitle);
         descriptionField = view.findViewById(R.id.inputDesc);
-        addTaskButton = view.findViewById(R.id.addTaskBt);
-        deleteTaskButton = view.findViewById(R.id.delTaskBt);
+        saveTaskButton = view.findViewById(R.id.addTaskBt);
+        cancelTaskButton = view.findViewById(R.id.delTaskBt);
+        labelField = view.findViewById(R.id.inputLabel);
 
+        viewModel = ViewModelProviders.of(this,viewModelFactory).get(TaskDetailsViewModel.class);
 
+        initAutoCompleteLabel();
+
+        saveTaskToDatabase();
+        cancelTaskButton();
+
+    }
+    //finish activity;
+    private void cancelTaskButton(){
+        cancelTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+            }
+        });
+    }
+
+    //save task and finish activity;
+    private void saveTaskToDatabase(){
+        saveTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewModel.insert(getDataField());
+                getActivity().finish();
+            }
+        });
+    }
+
+    // function get data with field when we created or modification task
+    private Task getDataField(){
+        String title = titleField.getText().toString();
+        String description = descriptionField.getText().toString();
+        String label = labelField.getText().toString();
+        return new Task(title,description,label,0,true);
+    }
+
+    private void initAutoCompleteLabel(){
+        String[] arrayLabels = {"Label1", "Label2"};
+        ArrayAdapter<String> labelAdapter = new ArrayAdapter<String>(context, R.layout.auto_complete_item,R.id.label_item_id, arrayLabels);
+        labelField.setAdapter(labelAdapter);
     }
 
     @Override

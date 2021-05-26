@@ -1,20 +1,32 @@
 package com.kabasonic.todo;
 
-import android.os.Bundle;
+import android.app.Application;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.kabasonic.todo.di.ApplicationComponent;
+import com.kabasonic.todo.di.ApplicationModule;
+import com.kabasonic.todo.di.DaggerApplicationComponent;
+import com.kabasonic.todo.di.RoomModule;
 
 
-public class MainActivity extends AppCompatActivity {
+public class AppTodo extends Application {
+
+    private ApplicationComponent applicationComponent;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public void onCreate() {
+        super.onCreate();
 
+        applicationComponent = DaggerApplicationComponent
+                .builder()
+                .applicationModule(new ApplicationModule(this))
+                .roomModule(new RoomModule(this))
+                .build();
 
     }
 
+    public ApplicationComponent getApplicationComponent(){
+        return applicationComponent;
+    }
 }
 
 /*

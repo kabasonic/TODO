@@ -6,10 +6,15 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.kabasonic.todo.data.TaskRepository;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class CustomViewModelFactory implements ViewModelProvider.Factory {
 
-   private final TaskRepository repository;
+    private final TaskRepository repository;
 
+    @Inject
     public CustomViewModelFactory(TaskRepository taskRepository) {
         this.repository = taskRepository;
     }
