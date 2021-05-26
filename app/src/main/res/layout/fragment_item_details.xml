@@ -88,14 +88,24 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/addTaskBt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="add task"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionTextInputLayout" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addTaskBt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="add task"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/delTaskBt"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionTextInputLayout" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/delTaskBt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Delete task"
+        app:layout_constraintStart_toEndOf="@id/addTaskBt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionTextInputLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

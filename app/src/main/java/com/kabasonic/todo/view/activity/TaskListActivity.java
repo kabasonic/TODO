@@ -1,9 +1,7 @@
 package com.kabasonic.todo.view.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 
 import com.kabasonic.todo.R;

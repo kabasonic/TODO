@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.button.MaterialButton;
 import com.kabasonic.todo.R;
 
 public class TaskDetailsFragment extends Fragment {
@@ -18,6 +20,11 @@ public class TaskDetailsFragment extends Fragment {
 
     private long taskId;
     private Context context;
+
+    private EditText titleField;
+    private EditText descriptionField;
+    private MaterialButton addTaskButton;
+    private MaterialButton deleteTaskButton;
 
     public TaskDetailsFragment(){}
 
@@ -47,6 +54,11 @@ public class TaskDetailsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        titleField = view.findViewById(R.id.inputTitle);
+        descriptionField = view.findViewById(R.id.inputDesc);
+        addTaskButton = view.findViewById(R.id.addTaskBt);
+        deleteTaskButton = view.findViewById(R.id.delTaskBt);
 
 
     }
