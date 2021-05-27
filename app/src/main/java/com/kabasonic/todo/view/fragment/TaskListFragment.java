@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kabasonic.todo.AppTodo;
 import com.kabasonic.todo.R;
@@ -46,6 +50,8 @@ public class TaskListFragment extends Fragment {
     private RecyclerView recyclerView;
     private FloatingActionButton floatingActionButton;
     private ImageView imageView;
+    private MaterialToolbar toolbar;
+    private ActionBar actionBar;
 
     private TaskListAdapter taskListAdapter;
 
@@ -62,6 +68,7 @@ public class TaskListFragment extends Fragment {
         ((AppTodo) getActivity().getApplication())
                 .getApplicationComponent()
                 .inject(this);
+
     }
 
     @Override
@@ -78,6 +85,11 @@ public class TaskListFragment extends Fragment {
         recyclerView = view.findViewById(R.id.listRecyclerViewId);
         floatingActionButton = view.findViewById(R.id.createTaskId);
         imageView = view.findViewById(R.id.infoImageId);
+        toolbar = view.findViewById(R.id.toolbarListFragment);
+
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        setHasOptionsMenu(true);
 
         viewModel = ViewModelProviders.of(this,viewModelFactory).get(TaskListViewModel.class);
 
@@ -98,13 +110,24 @@ public class TaskListFragment extends Fragment {
         recyclerView.setAdapter(taskListAdapter);
         taskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
 
+            //get id task with adapter and open selected task
             @Override
             public void onClickItemTask(long id) {
-                Activity container = getActivity();
-                Intent intent = new Intent(container, TaskDetailsActivity.class);
-                intent.putExtra(TASK_ID,id);
-                startActivity(intent);
+                    Activity container = getActivity();
+                    Intent intent = new Intent(container, TaskDetailsActivity.class);
+                    intent.putExtra(TASK_ID,id);
+                    startActivity(intent);
             }
+
+            //get id and status active checkbox with adapter
+            //id active TRUE task is done else is not done
+            @Override
+            public void onClickActiveTask(long id, boolean active) {
+                viewModel.updateTaskStatus(id,active);
+                Log.d("TaskListFragment", "write to db " + active);
+                taskListAdapter.notifyDataSetChanged();
+            }
+
         });
     }
 
@@ -137,6 +160,26 @@ public class TaskListFragment extends Fragment {
         });
     }
 
+    //delete selected tasks with database using id task
+//    private void buildDialogDeleteTasks(List<Long> listTaskId){
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//        builder.setTitle("Delete tasks")
+//                .setMessage("Delete selected tasks?")
+//                .setPositiveButton("Yes", (dialog, id) -> {
+//                    for(Long taskId: listTaskId){
+//                        viewModel.delete(taskId);
+//                    }
+//                    taskListAdapter.clearSelectedTasksWithList();
+//                    dialog.dismiss();
+//                })
+//                .setNegativeButton("Cancel", (dialog, id) -> {
+//                    taskListAdapter.clearSelectedTasksWithList();
+//                    dialog.dismiss();
+//                });
+//        builder.create();
+//        builder.show();
+//    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -147,4 +190,8 @@ public class TaskListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
+
+
+
+
 }

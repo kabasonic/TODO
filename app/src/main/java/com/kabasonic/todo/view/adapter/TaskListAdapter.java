@@ -1,14 +1,20 @@
 package com.kabasonic.todo.view.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
@@ -21,30 +27,31 @@ import java.util.List;
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHolder> {
 
     public interface OnItemClickListener {
-
         void onClickItemTask(long id);
-
+        void onClickActiveTask(long id, boolean active);
     }
 
     OnItemClickListener mListener;
 
-    public void setOnItemClickListener(OnItemClickListener mListener){
+    public void setOnItemClickListener(OnItemClickListener mListener) {
         this.mListener = mListener;
     }
 
     private Context context;
     private List<Task> taskList;
 
-    public TaskListAdapter(Context context){
+    public TaskListAdapter(Context context) {
         this.context = context;
         this.taskList = new ArrayList<>();
     }
 
+    public static long currentPosition = -1;
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.task_list_item,parent,false);
-        return new ViewHolder(view,mListener);
+        View view = LayoutInflater.from(context).inflate(R.layout.task_list_item, parent, false);
+        return new ViewHolder(view, mListener);
     }
 
     @Override
@@ -55,11 +62,12 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         holder.description.setText(task.getDescription());
         holder.label.setText(task.getLabel());
         holder.date.setText(String.valueOf(task.getTimestamp()));
+        holder.active.setChecked(task.isActive());
     }
 
     @Override
     public int getItemCount() {
-        if(taskList == null){
+        if (taskList == null) {
             return 0;
         }
         return taskList.size();
@@ -77,6 +85,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         public MaterialCheckBox active;
         public ImageButton expendedButton;
 
+
         public ViewHolder(@NonNull View itemView, OnItemClickListener mListener) {
             super(itemView);
 
@@ -90,7 +99,18 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onClickItemTask(taskList.get(getAdapterPosition()).getId());
+                    long id = taskList.get(getAdapterPosition()).getId();
+                        mListener.onClickItemTask(id);
+                }
+            });
+
+            active.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean activeStatus = active.isChecked();
+                    active.setChecked(activeStatus);
+                    long id = taskList.get(getAdapterPosition()).getId();
+                    mListener.onClickActiveTask(id, activeStatus);
                 }
             });
         }

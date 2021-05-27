@@ -22,8 +22,12 @@ public class TaskListViewModel extends ViewModel {
     }
 
     //delete choose task with database;
-    public void delete(Task task){
-        repository.delete(task);
+    public void delete(long id){
+        repository.delete(id);
+    }
+
+    public void updateTaskStatus(long id, boolean active){
+        repository.updateStatusActive(id,active);
     }
 
 }

@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 
 public class TaskRepository {
@@ -54,11 +55,26 @@ public class TaskRepository {
     }
 
     //delete task with database;
-    public void delete(Task task){
+    public void delete(long id){
         Observable.fromCallable(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                taskDao.delete(task);
+                taskDao.delete(id);
+                return true;
+            }
+        }).subscribeOn(Schedulers.io())
+                .subscribe();
+    }
+
+    //update task status active;
+    public void updateStatusActive(long id, boolean active){
+        Observable.fromCallable(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                if(active)
+                    taskDao.updateStatusTask(id,1);
+                else
+                    taskDao.updateStatusTask(id,0);
                 return true;
             }
         }).subscribeOn(Schedulers.io())

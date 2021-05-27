@@ -30,8 +30,8 @@ public class TaskDetailsViewModel extends ViewModel {
     }
 
     //delete task with database;
-    public void delete(Task task){
-        repository.delete(task);
+    public void delete(long id){
+        repository.delete(id);
     }
 
 

@@ -4,4 +4,11 @@
     <string name="label">Label</string>
     <string name="date">dd/mm/year</string>
     <string name="description">Description</string>
+
+    <string-array name="label">
+        <item>Label 1</item>
+        <item>Label 1</item>
+        <item>Label 1</item>
+        <item>Label 1</item>
+    </string-array>
 </resources>

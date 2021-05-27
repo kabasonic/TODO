@@ -1,27 +1,35 @@
 package com.kabasonic.todo.view.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.kabasonic.todo.AppTodo;
 import com.kabasonic.todo.R;
 import com.kabasonic.todo.data.Task;
-import com.kabasonic.todo.view.adapter.TaskListAdapter;
 import com.kabasonic.todo.view.viewmodel.TaskDetailsViewModel;
 
 import javax.inject.Inject;
@@ -44,6 +52,8 @@ public class TaskDetailsFragment extends Fragment {
     private MaterialButton saveTaskButton;
     private MaterialButton cancelTaskButton;
     private AutoCompleteTextView labelField;
+    private MaterialToolbar toolbar;
+    private ActionBar actionBar;
 
     public TaskDetailsFragment(){}
 
@@ -85,18 +95,26 @@ public class TaskDetailsFragment extends Fragment {
         cancelTaskButton = view.findViewById(R.id.delTaskBt);
         labelField = view.findViewById(R.id.inputLabel);
 
+        toolbar = view.findViewById(R.id.toolbarDetailsFragment);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        setHasOptionsMenu(true);
+
         viewModel = ViewModelProviders.of(this,viewModelFactory).get(TaskDetailsViewModel.class);
+
+        setDataField();
 
         initAutoCompleteLabel();
         saveTaskToDatabase();
         cancelTaskButton();
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        setDataField();
+
     }
 
 
@@ -132,7 +150,7 @@ public class TaskDetailsFragment extends Fragment {
         String title = titleField.getText().toString();
         String description = descriptionField.getText().toString();
         String label = labelField.getText().toString();
-        return new Task(title,description,label,0,true);
+        return new Task(title,description,label,0,false);
     }
 
     //function set data to field
@@ -141,17 +159,19 @@ public class TaskDetailsFragment extends Fragment {
             viewModel.getTaskById(taskId).observe(getViewLifecycleOwner(), new Observer<Task>() {
                 @Override
                 public void onChanged(Task task) {
-                    titleField.setText(task.getTitle());
-                    descriptionField.setText(task.getDescription());
-                    labelField.setText(task.getLabel());
-                    dateField.setText(String.valueOf(task.getTimestamp()));
+                    if(task!=null){
+                        titleField.setText(task.getTitle());
+                        descriptionField.setText(task.getDescription());
+                        labelField.setText(task.getLabel());
+                        dateField.setText(String.valueOf(task.getTimestamp()));
+                    }
                 }
             });
         }
     }
 
     private void initAutoCompleteLabel(){
-        String[] arrayLabels = {"Label1", "Label2"};
+        String[] arrayLabels = getResources().getStringArray(R.array.label);
         ArrayAdapter<String> labelAdapter = new ArrayAdapter<String>(context, R.layout.auto_complete_item,R.id.label_item_id, arrayLabels);
         labelField.setAdapter(labelAdapter);
     }
@@ -167,4 +187,32 @@ public class TaskDetailsFragment extends Fragment {
         super.onDetach();
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_task_list,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId()==R.id.action_delete){
+            dialogDeleteTask();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void dialogDeleteTask(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Delete task")
+                .setMessage("You shoure delete this task?")
+                .setPositiveButton("Okay", (dialog, id) -> {
+                    viewModel.delete(taskId);
+                    getActivity().finish();
+                })
+                .setNegativeButton("Cancel", (dialog, id) -> {
+                    dialog.dismiss();
+                });
+         builder.create();
+         builder.show();
+    }
 }
