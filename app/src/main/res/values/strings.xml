@@ -16,6 +16,7 @@
     <string name="message_list_is_empty">Task list is empty.</string>
     <string name="task_save">Task has been saved.</string>
     <string name="task_not_saved">Task not saved</string>
+    <string name="save">Save</string>
 
     <string-array name="label">
         <item>Praca</item>
