@@ -4,11 +4,22 @@
     <string name="label">Label</string>
     <string name="date">dd/mm/year</string>
     <string name="description">Description</string>
+    <string name="select_a_date">Select a date</string>
+    <string name="MATERIAL_DATE_PICKER">MATERIAL_DATE_PICKER</string>
+    <string name="delete_a_task">Delete a task</string>
+    <string name="text_delete_dialog">You sure delete this task?</string>
+    <string name="okay">Okay</string>
+    <string name="cancel">Cancel</string>
+    <string name="FIELD_TITLE">FIELD_TITLE</string>
+    <string name="FIELD_DATE">FIELD_DATE</string>
+    <string name="FIELD_LABEL">FIELD_LABEL</string>
+    <string name="message_list_is_empty">Task list is empty.</string>
+    <string name="task_save">Task has been saved.</string>
+    <string name="task_not_saved">Task not saved</string>
 
     <string-array name="label">
-        <item>Label 1</item>
-        <item>Label 1</item>
-        <item>Label 1</item>
-        <item>Label 1</item>
+        <item>Praca</item>
+        <item>Zakupy</item>
+        <item>Inne</item>
     </string-array>
 </resources>

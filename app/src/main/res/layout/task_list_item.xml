@@ -78,25 +78,7 @@
 
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btRowId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="16dp"
-                android:layout_weight="0"
-                android:background="@drawable/ic_baseline_keyboard_arrow_down_24" />
-
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/descRowId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/linear1"
-            android:layout_margin="16dp"
-            android:text="Description"
-            android:textSize="18sp" />
 
     </RelativeLayout>
 

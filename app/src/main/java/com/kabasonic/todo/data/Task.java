@@ -10,16 +10,14 @@ public class Task {
     private long id;
 
     private String title;
-    private String description;
     private String label;
-    private long timestamp;
+    private String date;
     private boolean active;
 
-    public Task(String title, String description, String label, long timestamp, boolean active) {
+    public Task(String title,String label, String date, boolean active) {
         this.title = title;
-        this.description = description;
         this.label = label;
-        this.timestamp = timestamp;
+        this.date = date;
         this.active = active;
     }
 
@@ -39,14 +37,6 @@ public class Task {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getLabel() {
         return label;
     }
@@ -55,12 +45,12 @@ public class Task {
         this.label = label;
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    public String getDate() {
+        return date;
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public boolean isActive() {

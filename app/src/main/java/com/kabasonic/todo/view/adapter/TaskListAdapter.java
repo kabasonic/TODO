@@ -1,20 +1,13 @@
 package com.kabasonic.todo.view.adapter;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.util.Log;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
@@ -45,8 +38,6 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         this.taskList = new ArrayList<>();
     }
 
-    public static long currentPosition = -1;
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -59,10 +50,18 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         Task task = taskList.get(position);
 
         holder.title.setText(task.getTitle());
-        holder.description.setText(task.getDescription());
         holder.label.setText(task.getLabel());
-        holder.date.setText(String.valueOf(task.getTimestamp()));
+        holder.date.setText(String.valueOf(task.getDate()));
         holder.active.setChecked(task.isActive());
+        if (task.isActive()) {
+            holder.title.setPaintFlags(holder.title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.label.setPaintFlags(holder.label.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.date.setPaintFlags(holder.date.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        } else {
+            holder.title.setPaintFlags(0);
+            holder.label.setPaintFlags(0);
+            holder.date.setPaintFlags(0);
+        }
     }
 
     @Override
@@ -79,39 +78,29 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
-        public TextView description;
         public TextView label;
         public TextView date;
         public MaterialCheckBox active;
-        public ImageButton expendedButton;
 
 
         public ViewHolder(@NonNull View itemView, OnItemClickListener mListener) {
             super(itemView);
 
             title = itemView.findViewById(R.id.titleRowId);
-            description = itemView.findViewById(R.id.descRowId);
             label = itemView.findViewById(R.id.labelRowId);
             date = itemView.findViewById(R.id.dataRowId);
             active = itemView.findViewById(R.id.statusRowId);
-            expendedButton = itemView.findViewById(R.id.btRowId);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    long id = taskList.get(getAdapterPosition()).getId();
-                        mListener.onClickItemTask(id);
-                }
+            itemView.setOnClickListener(v -> {
+                long id = taskList.get(getAdapterPosition()).getId();
+                    mListener.onClickItemTask(id);
             });
 
-            active.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    boolean activeStatus = active.isChecked();
-                    active.setChecked(activeStatus);
-                    long id = taskList.get(getAdapterPosition()).getId();
-                    mListener.onClickActiveTask(id, activeStatus);
-                }
+            active.setOnClickListener(v -> {
+                boolean activeStatus = active.isChecked();
+                active.setChecked(activeStatus);
+                long id = taskList.get(getAdapterPosition()).getId();
+                mListener.onClickActiveTask(id, activeStatus);
             });
         }
     }
